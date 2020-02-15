@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export class signup extends Component {
+export class signin extends Component {
 
     constructor(props) {
         super(props);
@@ -109,4 +109,4 @@ export class signup extends Component {
     }
 }
 
-export default signup
+export default signin

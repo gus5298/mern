@@ -21,77 +21,11 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use('/cloud', cloudRoutes);
 app.use('/user', userRoutes);
-
-//sessions
-// const session = require('express-session')
-// const passport = require('passport');
-// app.use(passport.initialize())
-// app.use(passport.session()) // calls serializeUser and deserializeUser
-// app.use(
-//   session({
-//   secret: 'myg', //pick a random string to make the hash that is generated secure
-//   resave: false, //required
-//   saveUninitialized: false //required  
-// })
-// );
-// app.use( (req, res, next) => {
-//   console.log('req.session', req.session);
-//   return next();
-// });
-// app.post('/user/user', (req, res) => {
-//   console.log('user signup');
-//   req.session.email = req.body.email;
-//   res.end()
-// })
-
-
-// SESS_NAME = 'sid',
-// SESS_SECRET = 'secret!session',
-// SESS_LIFETIME = 1000 * 60 * 60 * 2;
-// userRoutes.post("", async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
-//     await Joi.validate({ email, password }, signUp);
-//     const newUser = new User({ email, password });
-//     const sessionUser = sessionizeUser(newUser);
-//     await newUser.save();
-//     req.session.user = sessionUser;
-//     res.send(sessionUser);
-//     console.log(req.session)
-//  } catch (err) {
-//    res.status(400).send(parseError(err));
-//   }
-// });
-
-// //const app = express();
-//     const MongoStore = connectStore(session);
-//     app.use(express.urlencoded({ extended: true }));
-//     app.use(express.json());
-//     app.use(session({
-//       name: SESS_NAME,
-//       secret: SESS_SECRET,
-//       saveUninitialized: false,
-//       resave: false,
-//       store: new MongoStore({
-//         mongooseConnection: mongoose.connection,
-//         collection: 'session',
-//         ttl: parseInt(SESS_LIFETIME) / 1000
-//       }),
-//       cookie: {
-//         sameSite: true,
-//         secure: NODE_ENV === 'production',
-//         maxAge: parseInt(SESS_LIFETIME)
-//       }
-//     }));
-
-
-
-
-
-
-
-
 app.set("port", process.env.PORT || 5000);
+
+
+
+
 
 mongoose.connect(
   "mongodb://localhost:27017/cloud",
@@ -205,11 +139,10 @@ let obj = {
 
 
 
-//login page: storing and comparing email and password,and redirecting to home page after login
+// //login page: storing and comparing email and password,and redirecting to home page after login
 userRoutes.route('/user').post((req, res, next) => { 
   console.log(req.body.email)
   console.log(req.body.password)
-
      Register.findOne({
           
               email: req.body.email
@@ -220,22 +153,14 @@ userRoutes.route('/user').post((req, res, next) => {
          } else {
 bcrypt.compare(req.body.password, user.password, function (err, result) {
         if (result == true) {
-           //return done(null, user)
-            //res.redirect('/');
             console.log("Login")
         } else {
-         //res.send('Incorrect password');
-         console.log("Incorrect password")
-        // res.redirect('/');
-       
+         console.log("Incorrect password")       
         }
       });
      }
-    
-        
-
   });
-    //passport.authenticate('local')
+    
 });
 
 

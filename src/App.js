@@ -56,6 +56,25 @@ class App extends Component {
     })
   }
 
+
+ logout() {
+        
+        console.log('logging out')
+        axios.post('/user/logout').then(res => {
+          console.log(res.data)
+          if (res.status === 200) {
+            this.props.updateUser({
+              loggedIn: false,
+              email: null
+            })
+          }
+        }).catch(error => {
+            console.log('Logout error')
+        })
+      }
+
+
+
   render() {
     
     return (
@@ -67,6 +86,7 @@ class App extends Component {
       <div className="App">
    
        <Header /> 
+       
       <Route path="/" exact component={AllFilesList} />
       <Route path="/edit/:id" component={EditFile} />
       <Route path="/create" component ={AddFiles} />
@@ -74,6 +94,7 @@ class App extends Component {
       {/* <Route path="/signin" component={Signin} /> */}
      
       <Route path="/signup" component={Signup} />
+    
 
 
       

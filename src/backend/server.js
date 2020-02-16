@@ -89,6 +89,7 @@ userRoutes.get('/user', (req, res, next) => {
 
 userRoutes.post('/logout', (req, res) => {
     if (req.user) {
+      console.log('logged out');
         req.logout()
         res.send({ msg: 'logging out' })
     } else {

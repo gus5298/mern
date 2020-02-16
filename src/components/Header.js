@@ -10,6 +10,7 @@ export default function Header() {
                 <Link style={link} to="/about"> About TMS Cloud</Link> |
                 <Link style={link} to="/create"> Add File</Link> 
                 {/* <Link style={link} to="/edit/:id">Edit File</Link> */}
+               
         </div>
     )
 }

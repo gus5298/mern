@@ -17,16 +17,8 @@ var saltRounds = 10;
 
 app.use(cors());
 
-app.use(express.json());
-app.use(bodyParser.json());
-app.use('/cloud', cloudRoutes);
-app.use('/user', userRoutes);
+
 app.set("port", process.env.PORT || 5000);
-
-
-
-
-
 mongoose.connect(
   "mongodb://localhost:27017/cloud",
   { useNewUrlParser: true }
@@ -37,6 +29,56 @@ mongoose.set('useFindAndModify', false);
 
 const db = mongoose.connection;
 
+
+
+
+
+
+
+
+//
+
+var session = require("express-session")
+const MongoStore = require('connect-mongo')(session)
+const passport = require('./passport')
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+
+// Sessions
+
+app.use(express.static("public"));
+app.use(
+  session({
+    secret: 'fraggle-rock', //pick a random string to make the hash that is generated secure
+    store: new MongoStore({ mongooseConnection: db }),
+    resave: false, //required
+    saveUninitialized: false //required
+  })
+)
+
+// Passport
+
+app.use(passport.initialize());
+app.use(passport.session()); // calls the deserializeUser
+
+
+
+userRoutes.post('/login',
+  passport.authenticate('local')
+);
+
+
+
+
+//
+
+app.use(express.json());
+app.use(bodyParser.json());
+app.use('/cloud', cloudRoutes);
+app.use('/user', userRoutes);
+
 db.once("open", () => {
   console.log("Successfully connected to MongoDB using Mongoose!");
 });
@@ -44,6 +86,8 @@ db.once("open", () => {
 app.listen(app.get("port"), () => {
   console.log(`TMS Cloud Express Server running at http://localhost:${app.get("port")}`)
 });
+
+
 
 
 cloudRoutes.route('/').get((req, res) => {
@@ -108,9 +152,9 @@ cloudRoutes.route('/delete/:id').delete((req, res, next) => {
       console.log(err)
       return next(err)
     } else {
-      res.status(200).json({msg: data});
+      res.status(200).json({ msg: data });
       console.log("File Deleted")
- 
+
     }
 
   });
@@ -118,50 +162,55 @@ cloudRoutes.route('/delete/:id').delete((req, res, next) => {
 
 
 userRoutes.route('/user/create').post((req, res) => {
- bcrypt.hash(req.body.password, saltRounds) 
- .then(function (hashpass){
-let obj = {
-   email: req.body.email,
-   password: hashpass
-   };
+  bcrypt.hash(req.body.password, saltRounds)
+    .then(function (hashpass) {
+      let obj = {
+        email: req.body.email,
+        password: hashpass
+      };
 
-  let myuser = new Register(obj);
-  myuser.save().then(register => {
-    res.status(200).json({ 'TMS Cloud': 'User added successfully' });
-    //res.redirect('/signin');
-  })
-    .catch(err => {
-      res.status(400).send('User was unfortunately not added');
-      console.log(err)
+      let myuser = new Register(obj);
+      myuser.save().then(register => {
+        res.status(200).json({ 'TMS Cloud': 'User added successfully' });
+        //res.redirect('/signin');
+      })
+        .catch(err => {
+          res.status(400).send('User was unfortunately not added');
+          console.log(err)
+        });
     });
-});
 });
 
 
 
 // //login page: storing and comparing email and password,and redirecting to home page after login
-userRoutes.route('/user').post((req, res, next) => { 
-  console.log(req.body.email)
-  console.log(req.body.password)
-     Register.findOne({
-          
-              email: req.body.email
-                 
-     }).then(function (user) {
-         if (!user) {
-           console.log("no user")
-         } else {
-bcrypt.compare(req.body.password, user.password, function (err, result) {
-        if (result == true) {
-            console.log("Login")
-        } else {
-         console.log("Incorrect password")       
-        }
-      });
-     }
-  });
-    
-});
+// userRoutes.route('/user').post((req, res, next) => { 
+//   console.log(req.body.email)
+//   console.log(req.body.password)
+//      Register.findOne({
+
+//               email: req.body.email
+
+//      }).then(function (user) {
+//          if (!user) {
+//            console.log("no user")
+//          } else {
+// bcrypt.compare(req.body.password, user.password, function (err, result) {
+//         if (result == true) {
+//             console.log("Login")
+//         } else {
+//          console.log("Incorrect password")       
+//         }
+//       });
+//      }
+//   });
+
+// });
+
+
+
+
+
 
 
 

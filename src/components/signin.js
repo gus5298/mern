@@ -61,7 +61,7 @@ export class signin extends Component {
                    
         }
 
-        axios.post('http://localhost:5000/user/user', newFile).then(res => console.log(res.data))
+        axios.post('http://localhost:5000/user/login', newFile).then(res => console.log(res.data))
         //window.location.href = "http://localhost:3000/";
 
     }

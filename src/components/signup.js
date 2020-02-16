@@ -61,7 +61,7 @@ export class signup extends Component {
                    
         }
 
-        axios.post('http://localhost:5000/user/user/create', newFile).then(res => console.log(res.data))
+        axios.post('http://localhost:5000/user/create', newFile).then(res => console.log(res.data))
         window.location.href = "http://localhost:3000/signin";
 
     }

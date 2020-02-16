@@ -58,6 +58,7 @@ app.use(
   })
 )
 
+
 // Passport
 
 app.use(passport.initialize());
@@ -66,10 +67,34 @@ app.use(passport.session()); // calls the deserializeUser
 
 
 userRoutes.post('/login',
-  passport.authenticate('local')
+  passport.authenticate('local'),
+    (req, res) => {
+        console.log('logged in', req.user);
+        var userInfo = {
+            email: req.user.email
+        };
+        res.send(userInfo);
+    }
 );
 
+userRoutes.get('/user', (req, res, next) => {
+    console.log('===== user!!======')
+    console.log(req.user)
+    if (req.user) {
+        res.json({ email: req.user })
+    } else {
+        res.json({ email: null })
+    }
+})
 
+userRoutes.post('/logout', (req, res) => {
+    if (req.user) {
+        req.logout()
+        res.send({ msg: 'logging out' })
+    } else {
+        res.send({ msg: 'no user to log out' })
+    }
+})
 
 
 //
@@ -161,7 +186,7 @@ cloudRoutes.route('/delete/:id').delete((req, res, next) => {
 })
 
 
-userRoutes.route('/user/create').post((req, res) => {
+userRoutes.route('/create').post((req, res) => {
   bcrypt.hash(req.body.password, saltRounds)
     .then(function (hashpass) {
       let obj = {

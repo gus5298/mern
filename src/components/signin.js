@@ -9,14 +9,15 @@ export class signin extends Component {
 
         this.onChangeemail = this.onChangeemail.bind(this);
         this.onChangepassword= this.onChangepassword.bind(this);
-        
+        this.onChange = this.onChange.bind(this)
 
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state ={
            
-            emailsignup: '',
-            passwordsignup: ''
+            emailsignin: '',
+            passwordsignin: '',
+            redirectTo: null
            
         }
     }
@@ -61,7 +62,25 @@ export class signin extends Component {
                    
         }
 
-        axios.post('http://localhost:5000/user/login', newFile).then(res => console.log(res.data))
+        axios.post('/user/login', newFile).then(res => {
+                console.log('login response: ')
+                console.log(res)
+                if (res.status === 200) {
+                    // update App.js state
+                    this.props.updateUser({
+                        loggedIn: true,
+                        email: res.data.email
+                    })
+                    // update the state to redirect to home
+                    this.setState({
+                        redirectTo: 'http://localhost:3000/'
+                    })
+                }
+            }).catch(error => {
+                console.log('login error: ')
+                console.log(error);
+                
+            })
         //window.location.href = "http://localhost:3000/";
 
     }
